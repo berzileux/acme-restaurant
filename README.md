@@ -39,3 +39,4 @@ npm run build    # type-check and build to dist/
 
 - Content lives in TypeScript files. A production version would load it from a headless CMS.
 - Client-rendered React. Server-side rendering (for example Next.js) would improve link previews and SEO.
+- test
