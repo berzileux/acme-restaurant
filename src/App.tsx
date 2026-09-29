@@ -14,7 +14,16 @@ function ScrollToTop() {
 export default function App() {
   return (
     <>
-      <a className="skip-link" href="#main">Skip to content</a>
+      <a
+        className="skip-link"
+        href="#/"
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('main')?.focus();
+        }}
+      >
+        Skip to content
+      </a>
       <ScrollToTop />
       <header className="site-header">
         <div className="container header-inner">
@@ -28,7 +37,7 @@ export default function App() {
           </nav>
         </div>
       </header>
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/locations/:slug" element={<LocationPage />} />

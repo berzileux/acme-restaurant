@@ -16,7 +16,16 @@ export default function Home() {
           <p className="eyebrow">{locations.length} neighborhood kitchens</p>
           <h1>{brand.tagline}</h1>
           <p className="lead">Same recipes, same fire, same welcome. Find the kitchen closest to you.</p>
-          <a className="button" href="#locations">Find a location</a>
+          <a
+            className="button"
+            href="#/"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('locations')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Find a location
+          </a>
         </div>
       </section>
 
