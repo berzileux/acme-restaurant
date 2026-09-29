@@ -1,0 +1,50 @@
+# Build, push and deploy the Acme Grill frontend to Cloud Run.
+# Trigger on pushes to main. For a manual run, pass the commit:
+#   gcloud builds submit --config=cloudbuild.yaml --substitutions=COMMIT_SHA=$(git rev-parse HEAD)
+
+substitutions:
+  _REGION: us-central1
+  _REPO: acme-restaurant
+  _SERVICE: acme-restaurant-frontend
+
+steps:
+  # Step 1 - Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend:$COMMIT_SHA'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend:latest'
+      - '.'
+
+  # Step 2 - Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend'
+
+  # Step 3 - Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE}'
+      - '--image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend:$COMMIT_SHA'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+      - '--memory=256Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=3'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+images:
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend:$COMMIT_SHA'
+  - '${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/frontend:latest'
