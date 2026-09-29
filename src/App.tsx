@@ -7,7 +7,10 @@ import { brand } from './content/brand';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => window.scrollTo(0, 0), [pathname]);
+  useEffect(() => {
+    // Braces matter: newer Chrome returns a Promise from scrollTo, and an effect must not return one.
+    window.scrollTo(0, 0);
+  }, [pathname]);
   return null;
 }
 
